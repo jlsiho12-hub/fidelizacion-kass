@@ -1,10 +1,31 @@
 import { DatabaseSync } from 'node:sqlite';
 import path from 'node:path';
+import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const dbPath = path.join(__dirname, 'fidelizacion.db');
+
+// En Vercel, el sistema de archivos raíz es de solo lectura.
+// Se usa /tmp/fidelizacion.db para permitir lecturas y escrituras sin errores.
+const isVercel = Boolean(process.env.VERCEL);
+let dbPath;
+
+if (isVercel) {
+  dbPath = path.join('/tmp', 'fidelizacion.db');
+  if (!fs.existsSync(dbPath)) {
+    const bundledDb = path.join(__dirname, 'fidelizacion.db');
+    if (fs.existsSync(bundledDb)) {
+      try {
+        fs.copyFileSync(bundledDb, dbPath);
+      } catch (e) {
+        console.error('Error al copiar base de datos inicial a /tmp:', e);
+      }
+    }
+  }
+} else {
+  dbPath = path.join(__dirname, 'fidelizacion.db');
+}
 
 export const db = new DatabaseSync(dbPath);
 

@@ -493,6 +493,10 @@ app.get('*', (req, res, next) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`✨ Servidor de Kass moda y estilo corriendo en http://localhost:${PORT}`);
-});
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`✨ Servidor de Kass moda y estilo corriendo en http://localhost:${PORT}`);
+  });
+}
+
+export default app;

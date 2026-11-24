@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { 
   Home, Users, FileText, QrCode, Settings as SettingsIcon, Plus,
   Sparkles, Gift, Check, LogOut, ArrowLeft, Smartphone, ExternalLink,
@@ -105,89 +106,69 @@ export default function AdminDashboard({ settings, onSaveSettings, onExitAdmin }
   };
 
   return (
-    <div className="min-h-screen bg-[#f3f4f6] text-slate-900 flex font-sans antialiased">
-      {/* 1. SIDEBAR OSCURO (Idéntico a Imagen 3) */}
-      <aside className="w-64 bg-[#111215] text-white flex flex-col justify-between shrink-0 p-4 border-r border-slate-800">
+    <div className="min-h-screen bg-[#0c0d14] bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-purple-950/40 via-[#0e0f17] to-[#090a0f] text-slate-900 flex font-sans antialiased">
+      {/* 1. SIDEBAR FLOTANTE GLASSY V2 */}
+      <aside className="w-64 m-3 rounded-3xl glass-panel text-white flex flex-col justify-between shrink-0 p-4">
         <div>
           {/* Logo y Nombre */}
-          <div className="flex items-center gap-3 px-3 py-4 mb-4 border-b border-slate-800">
+          <div className="flex items-center gap-3 px-3 py-4 mb-4 border-b border-white/10">
             {formData.logo_url ? (
-              <img src={formData.logo_url} alt="Logo" className="w-10 h-10 rounded-2xl object-cover bg-black border border-white/20" />
+              <img src={formData.logo_url} alt="Logo" className="w-10 h-10 rounded-2xl object-cover bg-black border border-white/20 shadow-md" />
             ) : (
-              <div className="w-10 h-10 rounded-2xl bg-stone-900 border border-white/20 flex items-center justify-center font-bold text-amber-300">
+              <div className="w-10 h-10 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center font-bold text-amber-300 shadow-inner">
                 {(formData.name || 'KM').substring(0, 2).toUpperCase()}
               </div>
             )}
             <div className="truncate">
               <h2 className="font-bold text-sm text-white truncate">{formData.name}</h2>
-              <span className="text-[11px] text-slate-400 block">Moda & Estilo</span>
+              <span className="text-[11px] text-white/50 block">Moda & Estilo</span>
             </div>
           </div>
 
-          {/* Menú */}
+          {/* Menú tipo píldora */}
           <nav className="space-y-1.5">
-            <button
-              onClick={() => setActiveMenu('mypage')}
-              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                activeMenu === 'mypage' 
-                  ? 'bg-slate-800 text-white shadow-sm' 
-                  : 'text-slate-400 hover:text-white hover:bg-slate-900'
-              }`}
-            >
-              <FileText className="w-4 h-4 text-purple-400" />
-              <span>Mi página</span>
-            </button>
-
-            <button
-              onClick={() => setActiveMenu('customers')}
-              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                activeMenu === 'customers' 
-                  ? 'bg-slate-800 text-white shadow-sm' 
-                  : 'text-slate-400 hover:text-white hover:bg-slate-900'
-              }`}
-            >
-              <Users className="w-4 h-4 text-pink-400" />
-              <span>Clientes ({stats?.totalCustomers || 0})</span>
-            </button>
-
-            <button
-              onClick={() => setActiveMenu('poster')}
-              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                activeMenu === 'poster' 
-                  ? 'bg-slate-800 text-white shadow-sm' 
-                  : 'text-slate-400 hover:text-white hover:bg-slate-900'
-              }`}
-            >
-              <QrCode className="w-4 h-4 text-emerald-400" />
-              <span>QR de unión</span>
-            </button>
-
-            <button
-              onClick={() => setActiveMenu('home')}
-              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                activeMenu === 'home' 
-                  ? 'bg-slate-800 text-white shadow-sm' 
-                  : 'text-slate-400 hover:text-white hover:bg-slate-900'
-              }`}
-            >
-              <BarChart3 className="w-4 h-4 text-amber-400" />
-              <span>Métricas & Gráficas</span>
-            </button>
+            {[
+              { id: 'mypage', label: 'Mi página', icon: FileText, color: 'text-purple-400' },
+              { id: 'customers', label: `Clientes (${stats?.totalCustomers || 0})`, icon: Users, color: 'text-pink-400' },
+              { id: 'poster', label: 'QR de unión', icon: QrCode, color: 'text-emerald-400' },
+              { id: 'home', label: 'Métricas & Gráficas', icon: BarChart3, color: 'text-amber-400' }
+            ].map(item => {
+              const Icon = item.icon;
+              const isActive = activeMenu === item.id;
+              return (
+                <motion.button
+                  key={item.id}
+                  whileHover={{ x: 3 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => setActiveMenu(item.id)}
+                  className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-bold transition-all ${
+                    isActive
+                      ? 'bg-white/15 text-white border border-white/20 shadow-lg shadow-black/20'
+                      : 'text-white/60 hover:text-white hover:bg-white/5 border border-transparent'
+                  }`}
+                >
+                  <Icon className={`w-4 h-4 ${item.color}`} />
+                  <span>{item.label}</span>
+                </motion.button>
+              );
+            })}
           </nav>
         </div>
 
         {/* Botón inferior morado fijo: "+ Marcar sello" */}
-        <div className="space-y-3 pt-4 border-t border-slate-800">
-          <button
+        <div className="space-y-3 pt-4 border-t border-white/10">
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.97 }}
             onClick={() => setActiveMenu('scanner')}
-            className="w-full py-3.5 rounded-2xl bg-[#7c3aed] hover:bg-[#6d28d9] text-white font-bold text-xs shadow-lg shadow-purple-950 flex items-center justify-center gap-2 transition-all active:scale-95"
+            className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-[#7c3aed] to-[#a855f7] hover:from-[#6d28d9] hover:to-[#9333ea] text-white font-bold text-xs shadow-lg shadow-purple-900/40 flex items-center justify-center gap-2 transition-all"
           >
             <Plus className="w-4 h-4" />
             <span>+ Marcar sello</span>
-          </button>
+          </motion.button>
 
-          <div className="flex items-center justify-between px-2 text-[11px] text-slate-500">
-            <button onClick={onExitAdmin} className="hover:text-white">Ver como cliente</button>
+          <div className="flex items-center justify-between px-2 text-[11px] text-white/40">
+            <button onClick={onExitAdmin} className="hover:text-white transition-colors">Ver como cliente</button>
             <button onClick={() => { localStorage.removeItem('kass_admin_auth'); window.location.reload(); }} className="hover:text-red-400">Salir</button>
           </div>
         </div>
@@ -757,15 +738,15 @@ export default function AdminDashboard({ settings, onSaveSettings, onExitAdmin }
 
             {/* Panel Derecho: SIMULADOR DE IPHONE REALISTA (Cambia de vista según la pestaña activa!) */}
             <div className="w-full xl:w-[380px] shrink-0 space-y-3">
-              <div className="flex items-center justify-between px-2">
-                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
-                  <Smartphone className="w-3.5 h-3.5 text-purple-600" />
+              <div className="flex items-center justify-between px-3 py-2 rounded-full glass-pill">
+                <span className="text-xs font-bold text-white/80 uppercase tracking-wider flex items-center gap-1.5">
+                  <Smartphone className="w-3.5 h-3.5 text-purple-400" />
                   <span>Así lo ve tu cliente ({pageSubTab === 'welcome' ? 'Bienvenida' : pageSubTab === 'register' ? 'Registro' : 'Tarjeta'})</span>
                 </span>
                 <a
                   href="/"
                   target="_blank"
-                  className="text-xs font-bold text-purple-600 hover:underline flex items-center gap-1"
+                  className="text-xs font-bold text-purple-300 hover:text-white flex items-center gap-1 transition-colors"
                 >
                   <span>Abrir web</span>
                   <ExternalLink className="w-3 h-3" />
@@ -823,51 +804,108 @@ export default function AdminDashboard({ settings, onSaveSettings, onExitAdmin }
           </div>
         )}
 
-        {/* ================= SECCIÓN MÉTRICAS & GRÁFICAS (HOME) ================= */}
+        {/* ================= SECCIÓN MÉTRICAS & GRÁFICAS (GLASSY DASHBOARD V2) ================= */}
         {activeMenu === 'home' && stats && (
-          <div className="p-8 max-w-5xl mx-auto w-full space-y-8 animate-in fade-in">
-            <div>
-              <h1 className="font-bold text-2xl text-slate-900">Métricas & Rendimiento del Club</h1>
-              <p className="text-xs text-slate-500 mt-1">Monitorea el crecimiento de tus clientas, retención y sellos otorgados.</p>
+          <div className="p-6 sm:p-8 max-w-6xl mx-auto w-full space-y-7 relative">
+            {/* Top Floating Pill Header */}
+            <div className="glass-pill rounded-full px-5 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div className="flex items-center gap-3">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+                <div>
+                  <h1 className="font-bold text-base sm:text-lg text-white leading-tight">
+                    Métricas & Rendimiento del Club
+                  </h1>
+                  <p className="text-[11px] text-white/60">
+                    Monitorea el crecimiento de tus clientas, retención y sellos otorgados en tiempo real.
+                  </p>
+                </div>
+              </div>
+              <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-white/10 text-amber-300 border border-white/15 self-start sm:self-auto">
+                ✨ Kass Moda Analytics
+              </span>
             </div>
 
-            {/* 4 Tarjetas de Métricas Principales */}
+            {/* 4 Tarjetas StatsCard estilo Glassy Dashboard V2 */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <div className="p-5 rounded-3xl bg-white border border-slate-200 shadow-sm space-y-1">
-                <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Total Clientes</span>
-                <div className="flex items-baseline justify-between">
-                  <span className="text-3xl font-black text-slate-900">{stats.totalCustomers}</span>
-                  <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">+100%</span>
+              <motion.div
+                whileHover={{ y: -5, scale: 1.01 }}
+                transition={{ type: 'spring', stiffness: 320, damping: 24 }}
+                className="glass-card p-6 rounded-2xl relative overflow-hidden"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <p className="text-xs font-medium text-white/60">Total Clientes</p>
+                    <h2 className="text-3xl font-bold text-white mt-1">{stats.totalCustomers}</h2>
+                    <p className="flex items-center gap-1 text-xs text-emerald-400 mt-2 font-semibold">
+                      <ArrowUpRight className="w-4 h-4" />
+                      <span>Activos en tienda</span>
+                    </p>
+                  </div>
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500/30 to-pink-500/20 border border-white/20 flex items-center justify-center text-white">
+                    <Users className="w-5 h-5" />
+                  </div>
                 </div>
-                <span className="text-[11px] text-slate-400 block pt-1">Registrados en tienda</span>
-              </div>
+              </motion.div>
 
-              <div className="p-5 rounded-3xl bg-white border border-slate-200 shadow-sm space-y-1">
-                <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Sellos Otorgados</span>
-                <div className="flex items-baseline justify-between">
-                  <span className="text-3xl font-black text-purple-600">{stats.totalStampsGiven}</span>
-                  <Sparkles className="w-4 h-4 text-purple-400" />
+              <motion.div
+                whileHover={{ y: -5, scale: 1.01 }}
+                transition={{ type: 'spring', stiffness: 320, damping: 24 }}
+                className="glass-card p-6 rounded-2xl relative overflow-hidden"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <p className="text-xs font-medium text-white/60">Sellos Otorgados</p>
+                    <h2 className="text-3xl font-bold text-white mt-1">{stats.totalStampsGiven}</h2>
+                    <p className="flex items-center gap-1 text-xs text-purple-300 mt-2 font-semibold">
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span>Compras registradas</span>
+                    </p>
+                  </div>
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500/30 to-indigo-500/20 border border-white/20 flex items-center justify-center text-purple-300">
+                    <Sparkles className="w-5 h-5" />
+                  </div>
                 </div>
-                <span className="text-[11px] text-slate-400 block pt-1">Compras registradas</span>
-              </div>
+              </motion.div>
 
-              <div className="p-5 rounded-3xl bg-white border border-slate-200 shadow-sm space-y-1">
-                <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Premios Listos (10 Sellos)</span>
-                <div className="flex items-baseline justify-between">
-                  <span className="text-3xl font-black text-amber-500">{stats.readyToRedeem}</span>
-                  <Gift className="w-4 h-4 text-amber-400" />
+              <motion.div
+                whileHover={{ y: -5, scale: 1.01 }}
+                transition={{ type: 'spring', stiffness: 320, damping: 24 }}
+                className="glass-card p-6 rounded-2xl relative overflow-hidden"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <p className="text-xs font-medium text-white/60">Premios Listos</p>
+                    <h2 className="text-3xl font-bold text-amber-300 mt-1">{stats.readyToRedeem}</h2>
+                    <p className="flex items-center gap-1 text-xs text-amber-300/90 mt-2 font-semibold">
+                      <Gift className="w-3.5 h-3.5" />
+                      <span>Para reclamar</span>
+                    </p>
+                  </div>
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500/30 to-orange-500/20 border border-white/20 flex items-center justify-center text-amber-300">
+                    <Gift className="w-5 h-5" />
+                  </div>
                 </div>
-                <span className="text-[11px] text-slate-400 block pt-1">Listos para reclamar</span>
-              </div>
+              </motion.div>
 
-              <div className="p-5 rounded-3xl bg-white border border-slate-200 shadow-sm space-y-1">
-                <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Premios Entregados</span>
-                <div className="flex items-baseline justify-between">
-                  <span className="text-3xl font-black text-emerald-600">{stats.totalRedemptions}</span>
-                  <Award className="w-4 h-4 text-emerald-400" />
+              <motion.div
+                whileHover={{ y: -5, scale: 1.01 }}
+                transition={{ type: 'spring', stiffness: 320, damping: 24 }}
+                className="glass-card p-6 rounded-2xl relative overflow-hidden"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <p className="text-xs font-medium text-white/60">Premios Entregados</p>
+                    <h2 className="text-3xl font-bold text-emerald-400 mt-1">{stats.totalRedemptions}</h2>
+                    <p className="flex items-center gap-1 text-xs text-emerald-400 mt-2 font-semibold">
+                      <ArrowUpRight className="w-4 h-4" />
+                      <span>Ciclos completos</span>
+                    </p>
+                  </div>
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500/30 to-teal-500/20 border border-white/20 flex items-center justify-center text-emerald-300">
+                    <Award className="w-5 h-5" />
+                  </div>
                 </div>
-                <span className="text-[11px] text-slate-400 block pt-1">Ciclos completados</span>
-              </div>
+              </motion.div>
             </div>
 
             {/* ================= BLOQUE 1: RITMO DE CLIENTAS (RETENCIÓN) ================= */}
